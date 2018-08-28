@@ -3,6 +3,7 @@ import json
 from discord import Game
 from discord.ext.commands import Bot
 
+# CONFIG
 BOT_PREFIX = (">")
 TOKEN = 'NDgwMTkzNzY0MzA5MDczOTIy.DlkScg.cdx33F83QtH7rLb9Unnce3WZk1Y'
 
