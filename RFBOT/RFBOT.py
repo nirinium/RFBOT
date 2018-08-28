@@ -93,8 +93,8 @@ async def on_message(message):
         # memes = get_memes()
         
         # msg = memes.format(message)
-        # msg = 'A MEME YOU SAY?'.format(message)
-        print "MEME!!!!!!";
+        msg = 'A MEME YOU SAY?'.format(message)
+        print ("MEME!!!!!!");
         await client.send_message(message.channel, msg)
 
 #keep
