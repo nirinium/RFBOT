@@ -4,7 +4,7 @@ from discord import Game
 from discord.ext.commands import Bot
 
 BOT_PREFIX = (">")
-TOKEN = ''
+TOKEN = 'NDgwMTkzNzY0MzA5MDczOTIy.DlkScg.cdx33F83QtH7rLb9Unnce3WZk1Y'
 
 client = Bot(command_prefix=BOT_PREFIX)
 
