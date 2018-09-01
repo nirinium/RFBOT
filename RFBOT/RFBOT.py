@@ -3,9 +3,9 @@ import json
 from discord import Game
 from discord.ext.commands import Bot
 
-# Reddit scraper stuff
-import requests, urllib
-import os, sys, time
+from imgurpython import ImgurClient
+from random import randint
+from time import sleep
 
 
 # CONFIG
@@ -14,69 +14,65 @@ TOKEN = 'NDgwMTkzNzY0MzA5MDczOTIy.DlkScg.cdx33F83QtH7rLb9Unnce3WZk1Y'
 
 client = Bot(command_prefix=BOT_PREFIX)
 
-
-
-# Helper Functions
-
-
-# ------------------------------------------------------------------
-# https://srikarg.github.io/blog/reddit-image-scraper-with-python/
-# def getPosts(subreddit, postLimit):
-#     url = 'http://www.reddit.com/r/' + subreddit + '/.json?limit=' + str(postLimit)
-#     headers = {
-#     'User-Agent': 'Reddit Wallpaper Scraper 1.0'
-#     }
-#     r = requests.get(url, headers=headers)
-#     if r.status_code == requests.codes.ok:
-#         data = r.json()
-#         print('Sleeping for 3 seconds...\n')
-#         time.sleep(3)
-#         return data['data']['children']
-#     else:
-#         text = ('Sorry, but there was an error retrieving the subreddit\'s data!')
-#         return text
-
-# def saveImages(posts, scoreLimit, save_dir='reddit_wallpapers'):
-#     for post in posts:
-#         url = post['data']['url']
-#         score = post['data']['score']
-#         title = post['data']['title']
-#         if 'i.imgur.com' in url and score > scoreLimit:
-#             saveImage(url, title, save_dir)
-
-# def saveImage(url, title, save_dir):
-#     global counter
-#     save_dir = makeSaveDir(save_dir)
-#     dot_location = url.rfind('.')
-#     filename = (save_dir + title.replace('/', ':') + url[dot_location: dot_location + 4]).encode('utf-8')
-#     if not os.path.exists(filename):
-#         print('Saving ' + filename + '!\n')
-#         counter += 1
-#         urllib.urlretrieve(url, filename)
-
-# def makeSaveDir(dir):
-#     if not os.path.exists(dir):
-#         os.makedirs(dir)
-#     return dir + '/'
-
-# def downloadImagesFromReddit(subreddits, postLimit=100, scoreLimit=20):
-#     for subreddit in subreddits:
-#         posts = getPosts(subreddit, postLimit)
-#         # saveImages(posts, scoreLimit, subreddit.lower())
-#     return str(posts)
-
-# ------------------------------------------------------------------
-
-
-# def get_memes():
-#         images = downloadImagesFromReddit([
-#             'wallpapers'
-#         ])
-
-#         return str(images);
+# From IMGUR
+client_id = 'bdb67f6e22d322a'
+client_secret = 'a01653158047ca1013a49a17a6a6cc9b26faa787'
 
 
 
+
+
+# getMemes Function()
+# Hits IMGUR API and returns imgur link
+# By- Nick Conn
+def get_meme():
+
+    
+    subreddits = [
+        'holdmybeer',
+        'funny',
+        'whitepeopletwitter',
+        'holdmyfries',
+        'MemeEconomy',
+        'wholesomememes',
+        'dankmemes',
+        'Whatcouldgowrong',
+        'RedneckGifs',
+        'gifs'
+    ]
+    # Get Length of list
+    subRedditLength = len(subreddits)
+    subRedditKey = randint(0, subRedditLength-1)
+
+    # Plug this into api for a random subreddit
+    subReddit = subreddits[subRedditKey]
+    
+    # Connect to Client
+    client = ImgurClient(client_id, client_secret)
+
+
+    # https://github.com/Imgur/imgurpython
+    items = client.subreddit_gallery(subReddit, sort='top', window='day', page=0)
+
+
+    # Grab the length of the dictionary returned from IMGUR
+    imgurLength = len(items)
+
+    if imgurLength != 0:
+        # Get random element
+        key = randint(0, imgurLength)
+
+        # Grab random meme link
+        link = items[key].link
+
+        return link
+    else:
+        return 'Please try again!'
+
+
+    
+
+# ------------------------------- Main -------------------------------
 
 @client.event
 async def on_message(message):
@@ -90,12 +86,14 @@ async def on_message(message):
 
     # Lets make a meme feature!
     if message.content.startswith('>meme'):
-        # memes = get_memes()
         
+        meme = get_meme()
         # msg = memes.format(message)
-        msg = 'A MEME YOU SAY?'.format(message)
-        print ("MEME!!!!!!");
+        msg = meme.format(message)
         await client.send_message(message.channel, msg)
+
+        # IMGUR API nonsense
+        sleep(2)
 
 #keep
 @client.event
@@ -105,3 +103,6 @@ async def on_ready():
 
 #start client
 client.run(TOKEN)
+
+
+# ------------------------------- Main -------------------------------
